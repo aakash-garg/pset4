@@ -19,4 +19,6 @@
 15. It gets a value of 1
 16. The fseek() function is used to change the file postion of the stream
 17. Used as an argument for fseek(); shows the position of the postion pointer.
-18.
+
+
+18. The culprit is RICK ASTLEY.....
