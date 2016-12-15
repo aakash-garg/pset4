@@ -80,6 +80,14 @@ int main(int argc, char* argv[])
 
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
+            
+           if(triple.rgbtRed==0xff)
+            {   
+                // because hex value of white is ffffff; and rgb value is 255 255 255. thus when the red colour pixel is encountered it changes the colour to white 
+                triple.rgbtRed=255;
+                triple.rgbtBlue=255;
+                triple.rgbtGreen=255;
+            }
 
             // write RGB triple to outfile
             fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
