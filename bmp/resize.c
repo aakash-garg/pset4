@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     int n = atoi(argv[1]);
     if(n<0 || n>100)
     {
-        printf("the factor should be positive and not more than 100")
+        printf("the factor should be positive and not more than 100");
         return 2;
     }
 
@@ -57,33 +57,20 @@ int main(int argc, char* argv[])
     BITMAPINFOHEADER bi;
     fread(&bi, sizeof(BITMAPINFOHEADER), 1, inptr);
     
-    int new_width=bi.biWidth*n;
-    int new_Height=bi.biHeight*n;
-    
-//    int padding =(4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
-    int new_padding = (4-(new_width*sizeof(RGBTRIPLE)%4)%4);
-    
-    RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*new_width);
-/*
-    int i, j;
-    for(i=0;i<abs(bi.biHeight);i++)
-    {
-        int k=0;
-        for(j=0;j<bi.biWidth;j++)
-        {
-            
-            
-            RGBTRIPLE triple;
-            fread(&triple,sizeof(RGBTRIPLE),1,inptr)
-            for(int x=0;x<n;x++)
-            {
-                count[k] = 
-            }
-        }
-    }
-*/
-    
+    int ori_width= bi.biWidth;
+    int ori_height= bi.biHeight;
+   
+    bi.biWidth= bi.biWidth*n;
+    bi.biHeight= bi.biHeight*n;
 
+    int ori_Padding= (4-(ori_width*sizeof(RGBTRIPLE))%4)%4;
+    int padding= (4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
+    
+    RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*bi.biWidth);
+    
+    bi.biSizeImage= abs(bi.biHeight) * ((bi.biWidth * sizeof (RGBTRIPLE)) + padding);
+    bf.bfSize= bi.biSizeImage + sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER); 
+    
     // ensure infile is (likely) a 24-bit uncompressed BMP 4.0
     if (bf.bfType != 0x4d42 || bf.bfOffBits != 54 || bi.biSize != 40 || 
         bi.biBitCount != 24 || bi.biCompression != 0)
@@ -101,14 +88,14 @@ int main(int argc, char* argv[])
     fwrite(&bi, sizeof(BITMAPINFOHEADER), 1, outptr);
 
     // determine padding for scanlines
-    int padding =  (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+//    int padding =  (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
 
     // iterate over infile's scanlines
-    for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight; i++)
+    for (int i = 0, biHeight = abs(ori_height); i < biHeight; i++)
     {
-        int k=0;
+        int xx=0;
         // iterate over pixels in scanline
-        for (int j = 0; j < bi.biWidth; j++)
+        for (int j = 0; j < ori_width; j++)
         {
             // temporary storage
             RGBTRIPLE triple;
@@ -117,18 +104,18 @@ int main(int argc, char* argv[])
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
             for(int x=0;x<n;x++)
             {
-                count[k] = triple;
-                k++;
+                count[xx] = triple;s
+                xx++;
             }
         }
         
         // to skip the cursor over padding;
-        fseek(inptr,padding,SEEK_CUR)
+        fseek(inptr,ori_padding,SEEK_CUR);
           
         // then add it back (to demonstrate how)
-        for(int temp=0;temp<new_height;temp++)
+        for(int temp=0;temp<n;temp++)
         {
-            fwrite(&count,sizeof(RGBTRIPLE),new_width,outptr);
+            fwrite(&count,sizeof(RGBTRIPLE),bi.biWidth,outptr);
             
             for (int k = 0; k < padding; k++)
             {
