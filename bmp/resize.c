@@ -60,27 +60,28 @@ int main(int argc, char* argv[])
     int new_width=bi.biWidth*n;
     int new_Height=bi.biHeight*n;
     
-    int padding =(4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
+//    int padding =(4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
     int new_padding = (4-(new_width*sizeof(RGBTRIPLE)%4)%4);
     
     RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*new_width);
-
+/*
     int i, j;
     for(i=0;i<abs(bi.biHeight);i++)
     {
+        int k=0;
         for(j=0;j<bi.biWidth;j++)
         {
-            /*
             
-            */
+            
             RGBTRIPLE triple;
             fread(&triple,sizeof(RGBTRIPLE),1,inptr)
             for(int x=0;x<n;x++)
             {
-                
+                count[k] = 
             }
         }
     }
+*/
     
 
     // ensure infile is (likely) a 24-bit uncompressed BMP 4.0
@@ -105,6 +106,7 @@ int main(int argc, char* argv[])
     // iterate over infile's scanlines
     for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight; i++)
     {
+        int k=0;
         // iterate over pixels in scanline
         for (int j = 0; j < bi.biWidth; j++)
         {
@@ -113,19 +115,28 @@ int main(int argc, char* argv[])
 
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
-
-            // write RGB triple to outfile
-            fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
+            for(int x=0;x<n;x++)
+            {
+                count[k] = triple;
+                k++;
+            }
         }
-
-        // skip over padding, if any
-        fseek(inptr, padding, SEEK_CUR);
-
+        
+        // to skip the cursor over padding;
+        fseek(inptr,padding,SEEK_CUR)
+          
         // then add it back (to demonstrate how)
-        for (int k = 0; k < padding; k++)
+        for(int temp=0;temp<new_height;temp++)
         {
-            fputc(0x00, outptr);
+            fwrite(&count,sizeof(RGBTRIPLE),new_width,outptr);
+            
+            for (int k = 0; k < padding; k++)
+            {
+                fputc(0x00, outptr);
+            }
+            
         }
+        
     }
 
     // close infile
