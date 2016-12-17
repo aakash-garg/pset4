@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     }
     
     int n = atoi(argv[1]);
-    if(n<0 || n>100)
+    if(n<1 || n>100)
     {
         printf("the factor should be positive and not more than 100");
         return 2;
@@ -57,20 +57,6 @@ int main(int argc, char* argv[])
     BITMAPINFOHEADER bi;
     fread(&bi, sizeof(BITMAPINFOHEADER), 1, inptr);
     
-    int ori_width= bi.biWidth;
-    int ori_height= bi.biHeight;
-   
-    bi.biWidth= bi.biWidth*n;
-    bi.biHeight= bi.biHeight*n;
-
-    int ori_Padding= (4-(ori_width*sizeof(RGBTRIPLE))%4)%4;
-    int padding= (4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
-    
-    RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*bi.biWidth);
-    
-    bi.biSizeImage= abs(bi.biHeight) * ((bi.biWidth * sizeof (RGBTRIPLE)) + padding);
-    bf.bfSize= bi.biSizeImage + sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER); 
-    
     // ensure infile is (likely) a 24-bit uncompressed BMP 4.0
     if (bf.bfType != 0x4d42 || bf.bfOffBits != 54 || bi.biSize != 40 || 
         bi.biBitCount != 24 || bi.biCompression != 0)
@@ -80,6 +66,19 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Unsupported file format.\n");
         return 4;
     }
+    
+    int ori_width= bi.biWidth;
+    int ori_height= bi.biHeight;
+   
+    bi.biWidth= bi.biWidth*n;
+    bi.biHeight= bi.biHeight*n;
+    
+    int ori_padding= (4-(ori_width*sizeof(RGBTRIPLE))%4)%4;
+    int padding= (4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
+    
+    RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*bi.biWidth);
+    bi.biSizeImage= abs(bi.biHeight) * ((bi.biWidth * sizeof (RGBTRIPLE)) + padding);
+    bf.bfSize= bi.biSizeImage + sizeof (BITMAPFILEHEADER) + sizeof (BITMAPINFOHEADER); 
 
     // write outfile's BITMAPFILEHEADER
     fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, outptr);
@@ -104,7 +103,7 @@ int main(int argc, char* argv[])
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
             for(int x=0;x<n;x++)
             {
-                count[xx] = triple;s
+                count[xx] = triple; //array will continue till the multiplication factor.. i.e n
                 xx++;
             }
         }
@@ -115,7 +114,7 @@ int main(int argc, char* argv[])
         // then add it back (to demonstrate how)
         for(int temp=0;temp<n;temp++)
         {
-            fwrite(&count,sizeof(RGBTRIPLE),bi.biWidth,outptr);
+            fwrite(count,sizeof(RGBTRIPLE),bi.biWidth,outptr);
             
             for (int k = 0; k < padding; k++)
             {
@@ -126,6 +125,7 @@ int main(int argc, char* argv[])
         
     }
 
+free(count);//to not to leak memory
     // close infile
     fclose(inptr);
 
