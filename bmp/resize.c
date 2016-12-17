@@ -56,6 +56,14 @@ int main(int argc, char* argv[])
     // read infile's BITMAPINFOHEADER
     BITMAPINFOHEADER bi;
     fread(&bi, sizeof(BITMAPINFOHEADER), 1, inptr);
+    
+    int new_width=bi.biWidth*n;
+    int new_Height=bi.biHeight*n;
+    
+    int padding =(4-(bi.biWidth*sizeof(RGBTRIPLE))%4)%4;
+    int new_padding = (4-(new_width*sizeof(RGBTRIPLE)%4)%4);
+    
+    RGBTRIPLE *count = malloc(sizeof(RGBTRIPLE)*new_width);
 
     int i, j;
     for(i=0;i<abs(bi.biHeight);i++)
