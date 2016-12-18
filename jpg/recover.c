@@ -12,16 +12,16 @@
 #include<stdlib.h>
 #include<stdint.h>
 #include<string.h>
-#include"bmp.h"
+typedef uint8_t  BYTE;
 
-int main(int argc, char* argv[])
+int main()
 {
     FILE *fp;
     fp=fopen("card.raw","r");
     
     if(fp==NULL)
     {
-        cout<<"Error opening file.\n";
+        printf("Error opening file.\n");
     }
     
     FILE *output;
@@ -34,14 +34,14 @@ int main(int argc, char* argv[])
     {
         fread(buffer, 512,1,fp);
         
-        if(buffer[0]=0xff && buffer[1]=0xd8 && buffer[2]=0xff && (buffer[3]==0xe0 || buffer[4]==0xe1)
+        if(buffer[0]==0xff && buffer[1]==0xd8 && buffer[2]==0xff && (buffer[3]==0xe0 || buffer[4]==0xe1))
         {
             fclose(output);
         
-            char* filename[10];
-            sprintf(filename,"%.3d.jpg"count);
+            char filename[10];
+            sprintf(filename,"%.3d.jpg",count);
             count++;
-            fopen("filename","w");
+            output = fopen("filename","w");
         }
         fwrite(buffer,512,1,output);
         if(feof(fp))
