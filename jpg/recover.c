@@ -22,6 +22,7 @@ int main()
     if(fp==NULL)
     {
         printf("Error opening file.\n");
+        return 0;
     }
     
     FILE *output;
@@ -30,27 +31,27 @@ int main()
     BYTE buffer[512];
     int count=0;
     
-    while(1)
+    while(fread(buffer,512,1,fp)==1)
     {
-        fread(buffer, 512,1,fp);
         
         if(buffer[0]==0xff && buffer[1]==0xd8 && buffer[2]==0xff && (buffer[3]==0xe0 || buffer[4]==0xe1))
         {
+            if(output!=NULL)
             fclose(output);
         
             char filename[10];
-            sprintf(filename,"%.3d.jpg",count);
+            sprintf(filename,"%03d.jpg",count);
             count++;
-            output = fopen("filename","w");
-        }
-        fwrite(buffer,512,1,output);
-        if(feof(fp))
-        {
-            break;
+            output = fopen(filename,"w");
         }
         
+        if(output!=NULL)
+        fwrite(buffer,512,1,output);
+        
     }
-    
+
     fclose(output);
     fclose(fp);
+    
+    return 0;
 }
