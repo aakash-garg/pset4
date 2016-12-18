@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
     output=NULL;
     
     BYTE buffer[512];
+    int count=0;
     
     while(1)
     {
@@ -36,13 +37,20 @@ int main(int argc, char* argv[])
         if(buffer[0]=0xff && buffer[1]=0xd8 && buffer[2]=0xff && (buffer[3]==0xe0 || buffer[4]==0xe1)
         {
             fclose(output);
+        
+            char* filename[10];
+            sprintf(filename,"%.3d.jpg"count);
+            count++;
+            fopen("filename","w");
+        }
+        fwrite(buffer,512,1,output);
+        if(feof(fp))
+        {
+            break;
         }
         
-        char* filename[10];
-        int count;
-        sprintf(filename,"%.3d.jpg"count);
-        count++;
-        
-        
     }
+    
+    fclose(output);
+    fclose(fp);
 }
