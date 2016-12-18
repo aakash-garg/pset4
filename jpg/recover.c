@@ -27,10 +27,22 @@ int main(int argc, char* argv[])
     FILE *output;
     output=NULL;
     
-    BYTE buffer;
+    BYTE buffer[512];
     
-    while()
+    while(1)
     {
-        fread()
+        fread(buffer, 512,1,fp);
+        
+        if(buffer[0]=0xff && buffer[1]=0xd8 && buffer[2]=0xff && (buffer[3]==0xe0 || buffer[4]==0xe1)
+        {
+            fclose(output);
+        }
+        
+        char* filename[10];
+        int count;
+        sprintf(filename,"%.3d.jpg"count);
+        count++;
+        
+        
     }
 }
